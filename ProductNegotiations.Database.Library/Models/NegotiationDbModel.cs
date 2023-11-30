@@ -9,6 +9,7 @@
         public decimal ProposedPrice { get; set; }
         public bool? Decision { get; set; }
         public string? DecisionDescription { get; set; }
+        public bool IsNegotiationResolved { get; set; } = false;
         public bool IsDeleted { get; set; } = false;
     }
 }

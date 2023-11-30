@@ -9,12 +9,30 @@ namespace ProductNegotiations.Database.Library.Services
         {
             throw new NotImplementedException();
         }
+        public async Task<IEnumerable<NegotiationDbModel>> GetUnresolvedNegotiationsAsync()
+        {
+            throw new NotImplementedException();
+        }
         public async Task<IEnumerable<NegotiationDbModel>> GetAllNegotiationsAsync()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<NegotiationDbModel>> GetNegotiationsByUserIdAsync(Guid userId)
+        public async Task<int> GetNegotiationsAmount(Guid productId, Guid userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<NegotiationDbModel>> GetAllNegotiationsByUserIdAsync(Guid userId)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<IEnumerable<NegotiationDbModel>> GetResolvedNegotiationsByUserIdAsync(Guid userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<NegotiationDbModel>> GetUnresolvedNegotiationsByUserIdAsync(Guid userId)
         {
             throw new NotImplementedException();
         }

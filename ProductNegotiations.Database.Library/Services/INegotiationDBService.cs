@@ -7,8 +7,12 @@ namespace ProductNegotiations.Database.Library.Services
         Task CreateNegotiationAsync(NegotiationDbModel negotiationDbModel);
         Task DeleteNegotiationAsync(NegotiationDbModel negotiationDbModel);
         Task<IEnumerable<NegotiationDbModel>> GetAllNegotiationsAsync();
+        Task<IEnumerable<NegotiationDbModel>> GetAllNegotiationsByUserIdAsync(Guid userId);
         Task<NegotiationDbModel> GetNegotiationByIdAsync(Guid id);
-        Task<IEnumerable<NegotiationDbModel>> GetNegotiationsByUserIdAsync(Guid userId);
+        Task<int> GetNegotiationsAmount(Guid productId, Guid userId);
+        Task<IEnumerable<NegotiationDbModel>> GetResolvedNegotiationsByUserIdAsync(Guid userId);
+        Task<IEnumerable<NegotiationDbModel>> GetUnresolvedNegotiationsAsync();
+        Task<IEnumerable<NegotiationDbModel>> GetUnresolvedNegotiationsByUserIdAsync(Guid userId);
         Task UpdateNegotiationAsync(NegotiationDbModel negotiationDbModel);
     }
 }
