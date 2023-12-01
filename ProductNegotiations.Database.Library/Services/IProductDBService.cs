@@ -6,7 +6,7 @@ namespace ProductNegotiations.Database.Library.Services
     {
         Task CreateProductAsync(ProductDbModel product);
         Task DeleteProduct(ProductDbModel product);
-        Task<IEnumerable<ProductDbModel>> GetAllProductsAsync(Guid id);
+        Task<IEnumerable<ProductDbModel>> GetAllProductsAsync();
         Task<ProductDbModel> GetProductByIdAsync(Guid id);
         Task UpdateProduct(ProductDbModel product);
     }
