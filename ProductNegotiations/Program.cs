@@ -30,6 +30,8 @@ builder.Services
         };
     });
 
+builder.Services.AddDbContext<NegotiationDbContext>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
