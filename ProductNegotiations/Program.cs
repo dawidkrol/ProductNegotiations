@@ -1,8 +1,9 @@
-using FirebaseAdmin;
-using Google.Apis.Auth.OAuth2;
-using Microsoft.IdentityModel.Tokens;
+using Firebase.Auth;
+using Firebase.Auth.Providers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ProductNegotiations.Database.Library;
 
 IConfiguration configuration = new ConfigurationBuilder()
                             .AddJsonFile("appsettings.json")
@@ -10,22 +11,26 @@ IConfiguration configuration = new ConfigurationBuilder()
 
 var builder = WebApplication.CreateBuilder(args);
 
-FirebaseApp.Create(new AppOptions()
+builder.Services.AddSingleton(new FirebaseAuthClient(new FirebaseAuthConfig
 {
-    Credential = GoogleCredential.GetApplicationDefault(),
-});
+    ApiKey = configuration["firebaseWebAPIKey"],
+    AuthDomain = $"{configuration["firebaseProjectName"]}.firebaseapp.com",
+    Providers = new FirebaseAuthProvider[]
+    {
+        new EmailProvider()
+    }
+}));
 
-builder.Services
-    .AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = configuration["Issuer"];
+        options.Authority = $"https://securetoken.google.com/{configuration["firebaseProjectName"]}";
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = configuration["Issuer"],
+            ValidIssuer = $"https://securetoken.google.com/{configuration["firebaseProjectName"]}",
             ValidateAudience = true,
-            ValidAudience = configuration["Audience"],
+            ValidAudience = configuration["firebaseProjectName"],
             ValidateLifetime = true
         };
     });
@@ -34,7 +39,8 @@ builder.Services.AddDbContext<NegotiationDbContext>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c => {
+builder.Services.AddSwaggerGen(c =>
+{
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "ProductNegotiations.API",
