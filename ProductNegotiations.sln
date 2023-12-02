@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductNegotiations.Library
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductNegotiations.Tests", "ProductNegotiations.Tests\ProductNegotiations.Tests.csproj", "{66208FF8-78BD-4BBA-91B8-428656E9782C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductNegotiations.Database.Library", "ProductNegotiations.Database.Library\ProductNegotiations.Database.Library.csproj", "{F523E732-CA4F-4A5F-A428-F4283D081B50}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{66208FF8-78BD-4BBA-91B8-428656E9782C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66208FF8-78BD-4BBA-91B8-428656E9782C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66208FF8-78BD-4BBA-91B8-428656E9782C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F523E732-CA4F-4A5F-A428-F4283D081B50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F523E732-CA4F-4A5F-A428-F4283D081B50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F523E732-CA4F-4A5F-A428-F4283D081B50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F523E732-CA4F-4A5F-A428-F4283D081B50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
