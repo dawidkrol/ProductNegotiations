@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProductNegotiations.Database.Library;
 using ProductNegotiations.Database.Library.Services;
+using ProductNegotiations.Library.Services;
 
 IConfiguration configuration = new ConfigurationBuilder()
                             .AddJsonFile("appsettings.json")
@@ -44,7 +45,9 @@ builder.Services.AddDbContext<NegotiationDbContext>();
 
 builder.Services.AddTransient<INegotiationDBService, NegotiationDBService>();
 builder.Services.AddTransient<IProductDBService, ProductDBService>();
-builder.Services.AddTransient<IUserDbService, UserDbService>();
+
+builder.Services.AddTransient<IProductService,  ProductService>();
+builder.Services.AddTransient<INegotiaitionService, NegotiaitionService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
