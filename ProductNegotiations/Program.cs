@@ -1,15 +1,20 @@
 using Firebase.Auth;
 using Firebase.Auth.Providers;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProductNegotiations.Database.Library;
+using ProductNegotiations.Database.Library.Services;
 
 IConfiguration configuration = new ConfigurationBuilder()
                             .AddJsonFile("appsettings.json")
                             .Build();
 
 var builder = WebApplication.CreateBuilder(args);
+
+FirebaseApp.Create();
 
 builder.Services.AddSingleton(new FirebaseAuthClient(new FirebaseAuthConfig
 {
@@ -36,6 +41,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddDbContext<NegotiationDbContext>();
+
+builder.Services.AddTransient<INegotiationDBService, NegotiationDBService>();
+builder.Services.AddTransient<IProductDBService, ProductDBService>();
+builder.Services.AddTransient<IUserDbService, UserDbService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
