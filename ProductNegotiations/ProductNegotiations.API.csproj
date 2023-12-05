@@ -28,10 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ProductNegotiations.Database.Library\ProductNegotiations.Database.Library.csproj" />
     <ProjectReference Include="..\ProductNegotiations.Library\ProductNegotiations.Library.csproj" />
   </ItemGroup>
