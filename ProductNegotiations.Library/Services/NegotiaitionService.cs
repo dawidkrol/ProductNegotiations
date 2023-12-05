@@ -136,7 +136,14 @@ namespace ProductNegotiations.Library.Services
             {
                 var productId = negotiationModel.Product.Id;
                 _logger.LogTrace("Creating negotiaition model by user: {userId}, about product: {Id}", userId, productId);
-                int negotiationTrials = await _service.GetNegotiationsAmount(productId, userId);
+
+                if(await _service.IsUnresolvedNegotiationByProductAndUser(productId, userId))
+                {
+                    _logger.LogDebug("We found unresolved negotiation for product: {productId} from the user: {userId}", userId, productId);
+                    return false;
+                }
+
+                int negotiationTrials = await _service.GetResolvedNegotiationsByUserIdAndProductAsync(productId, userId);
 
                 if (negotiationTrials > 3)
                 {
@@ -146,6 +153,15 @@ namespace ProductNegotiations.Library.Services
 
                 var data = negotiationModel.Adapt<NegotiationDbModel>();
                 await _service.CreateNegotiationAsync(data);
+
+                if (negotiationModel.ProposedPrice * 2 < negotiationModel.Product.Price)
+                {
+                    _logger.LogDebug("Proposed price exceeds twice the base price of the product, the proposal is rejected");
+
+                    await RefuseNegotiation(data.Id, "Proposed price exceeds twice the base price of the product");
+
+                    return false;
+                }
 
                 _logger.LogDebug("New negotiation created");
                 return true;
