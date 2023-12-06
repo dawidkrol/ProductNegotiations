@@ -1,42 +1,33 @@
+using FirebaseAdmin;
+using FirebaseAdminAuthentication.DependencyInjection.Extensions;
 using FluentValidation;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using ProductNegotiations.API.Models;
 using ProductNegotiations.API.Validators;
 using ProductNegotiations.Database.Library;
 using ProductNegotiations.Database.Library.Services;
 using ProductNegotiations.Library.Services;
-using System;
-
-IConfiguration configuration = new ConfigurationBuilder()
-                            .AddJsonFile("appsettings.json")
-                            .Build();
 
 var builder = WebApplication.CreateBuilder(args);
 
-//FirebaseApp.Create();
-
-//builder.Services.AddSingleton(new FirebaseAuthClient(new FirebaseAuthConfig
-//{
-//    ApiKey = configuration["firebaseWebAPIKey"],
-//    AuthDomain = $"{configuration["firebaseProjectName"]}.firebaseapp.com",
-//    Providers = new FirebaseAuthProvider[]
-//    {
-//        new EmailProvider()
-//    }
-//}));
+builder.Services.AddSingleton(FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromJson(builder.Configuration.GetValue<string>("FIREBASE_CONFIG"))
+}));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = $"https://securetoken.google.com/{configuration["firebaseProjectName"]}";
-        options.TokenValidationParameters = new TokenValidationParameters
+        options.Authority = builder.Configuration.GetValue<string>("firebaseAuthorityUrl");
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = $"https://securetoken.google.com/{configuration["firebaseProjectName"]}",
+            ValidIssuer = builder.Configuration.GetValue<string>("firebaseAuthorityUrl"),
             ValidateAudience = true,
-            ValidAudience = configuration["firebaseProjectName"],
+            ValidAudience = builder.Configuration.GetValue<string>("firebaseAppId"),
             ValidateLifetime = true
         };
     });
@@ -53,6 +44,7 @@ builder.Services.AddTransient<INegotiaitionService, NegotiaitionService>();
 
 // Validators
 builder.Services.AddTransient<IValidator<NegotiationClientCreateModel>, NegotiationClientValidator>();
+builder.Services.AddTransient<IValidator<ProductClientModel>, ProductValidation>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

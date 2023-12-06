@@ -48,7 +48,7 @@ namespace ProductNegotiations.Database.Library.Services
         /// </summary>
         /// <param name="productId">Product id</param>
         /// <param name="userId">Users id</param>
-        public async Task<int> GetNegotiationsAmount(Guid productId, Guid userId)
+        public async Task<int> GetNegotiationsAmount(Guid productId, string userId)
         {
             var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId).Count();
             return output;
@@ -57,7 +57,7 @@ namespace ProductNegotiations.Database.Library.Services
         /// Returns all negotiations attemps by specific user.
         /// </summary>
         /// <param name="userId">User id</param>
-        public async Task<IEnumerable<NegotiationDbModel>> GetAllNegotiationsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<NegotiationDbModel>> GetAllNegotiationsByUserIdAsync(string userId)
         {
             var output = getAllNotDeleted().Where(x => x.UserId == userId).AsEnumerable();
             return output;
@@ -66,7 +66,7 @@ namespace ProductNegotiations.Database.Library.Services
         /// Returns all resolved negotiations attemps by specific user.
         /// </summary>
         /// <param name="userId">User id</param>
-        public async Task<IEnumerable<NegotiationDbModel>> GetResolvedNegotiationsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<NegotiationDbModel>> GetResolvedNegotiationsByUserIdAsync(string userId)
         {
             var output = getAllNotDeleted().Where(x => x.UserId == userId && x.IsNegotiationResolved == true).AsEnumerable();
             return output;
@@ -75,7 +75,7 @@ namespace ProductNegotiations.Database.Library.Services
         /// Returns all unresolved negotiations attemps by specific user.
         /// </summary>
         /// <param name="userId">User id</param>
-        public async Task<IEnumerable<NegotiationDbModel>> GetUnresolvedNegotiationsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<NegotiationDbModel>> GetUnresolvedNegotiationsByUserIdAsync(string userId)
         {
             var output = getAllNotDeleted().Where(x => x.UserId == userId && x.IsNegotiationResolved == false).AsEnumerable();
             return output;
@@ -120,7 +120,7 @@ namespace ProductNegotiations.Database.Library.Services
         /// </summary>
         /// <param name="productId">Product id</param>
         /// <param name="userId">User id</param>
-        public async Task<int> GetResolvedNegotiationsByUserIdAndProductAsync(Guid productId, Guid userId)
+        public async Task<int> GetResolvedNegotiationsByUserIdAndProductAsync(Guid productId, string userId)
         {
             var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId && x.IsNegotiationResolved == true).Count();
             return output;
@@ -130,7 +130,7 @@ namespace ProductNegotiations.Database.Library.Services
         /// </summary>
         /// <param name="productId">Product id</param>
         /// <param name="userId">User id</param>
-        public async Task<bool> IsUnresolvedNegotiationByProductAndUser(Guid productId, Guid userId)
+        public async Task<bool> IsUnresolvedNegotiationByProductAndUser(Guid productId, string userId)
         {
             var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId && x.IsNegotiationResolved == false).Any();
             return output;
@@ -141,7 +141,7 @@ namespace ProductNegotiations.Database.Library.Services
         /// <param name="productId"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<bool> IsAlreadyAcceptedNegotiationByProductAndUser(Guid productId, Guid userId)
+        public async Task<bool> IsAlreadyAcceptedNegotiationByProductAndUser(Guid productId, string userId)
         {
             var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId && x.IsNegotiationResolved == true && x.Decision == true).Any();
             return output;

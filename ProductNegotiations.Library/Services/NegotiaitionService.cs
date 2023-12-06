@@ -74,7 +74,7 @@ namespace ProductNegotiations.Library.Services
             }
         }
 
-        public async Task<int?> GetNegotiationsAmount(Guid productId, Guid userId)
+        public async Task<int?> GetNegotiationsAmount(Guid productId, string userId)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace ProductNegotiations.Library.Services
             }
         }
 
-        public async Task<PagedList<NegotiationModel>> GetAllNegotiationsByUserIdAsync(PagingModel paging, Guid userId)
+        public async Task<PagedList<NegotiationModel>> GetAllNegotiationsByUserIdAsync(PagingModel paging, string userId)
         {
             try
             {
@@ -108,7 +108,7 @@ namespace ProductNegotiations.Library.Services
             }
         }
 
-        public async Task<PagedList<NegotiationModel>> GetResolvedNegotiationsByUserIdAsync(PagingModel paging, Guid userId)
+        public async Task<PagedList<NegotiationModel>> GetResolvedNegotiationsByUserIdAsync(PagingModel paging, string userId)
         {
             try
             {
@@ -126,7 +126,7 @@ namespace ProductNegotiations.Library.Services
             }
         }
 
-        public async Task<PagedList<NegotiationModel>> GetUnresolvedNegotiationsByUserIdAsync(PagingModel paging, Guid userId)
+        public async Task<PagedList<NegotiationModel>> GetUnresolvedNegotiationsByUserIdAsync(PagingModel paging, string userId)
         {
             try
             {
@@ -144,12 +144,12 @@ namespace ProductNegotiations.Library.Services
             }
         }
 
-        public async Task<int> GetResolvedNegotiationsByUserIdAndProductAsync(Guid productId, Guid userId)
+        public async Task<int> GetResolvedNegotiationsByUserIdAndProductAsync(Guid productId, string userId)
         {
             return await _service.GetResolvedNegotiationsByUserIdAndProductAsync(productId, userId);
         }
 
-        public async Task<NegotiationModel> CreateNegotiationAsync(Guid userId, NegotiationModel negotiationModel)
+        public async Task<NegotiationModel> CreateNegotiationAsync(string userId, NegotiationModel negotiationModel)
         {
             try
             {

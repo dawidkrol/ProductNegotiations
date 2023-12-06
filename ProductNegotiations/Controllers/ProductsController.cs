@@ -1,8 +1,12 @@
-﻿using Mapster;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ProductNegotiations.API.Models;
+using ProductNegotiations.API.Validators;
+using ProductNegotiations.Database.Library.Models;
 using ProductNegotiations.Library.Helpers;
 using ProductNegotiations.Library.Models;
 using ProductNegotiations.Library.Services;
@@ -15,11 +19,13 @@ namespace ProductNegotiations.API.Controllers
     {
         private readonly ILogger<ProductsController> _logger;
         private readonly IProductService _service;
+        private readonly IValidator<ProductClientModel> _validator;
 
-        public ProductsController(ILogger<ProductsController> logger, IProductService service)
+        public ProductsController(ILogger<ProductsController> logger, IProductService service, IValidator<ProductClientModel> validator)
         {
             _logger = logger;
             _service = service;
+            _validator = validator;
         }
         [HttpGet("api/Products/{id}")]
         public async Task<IActionResult> GetProductById(Guid id)
@@ -27,7 +33,7 @@ namespace ProductNegotiations.API.Controllers
             try
             {
                 var data = await _service.GetProductByIdAsync(id);
-                return Ok(data.Adapt<ProductModel>());
+                return Ok(data.Adapt<ProductClientModel>());
             }
             catch (Exception ex)
             {
@@ -51,7 +57,7 @@ namespace ProductNegotiations.API.Controllers
                     data.HasPrevious
                 };
                 Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-                return Ok(data.Adapt<IEnumerable<ProductModel>>());
+                return Ok(data.Adapt<IEnumerable<ProductClientModel>>());
             }
             catch (Exception ex)
             {
@@ -66,6 +72,12 @@ namespace ProductNegotiations.API.Controllers
         {
             try
             {
+                ValidationResult result = await _validator.ValidateAsync(product);
+                if (!result.IsValid)
+                {
+                    return BadRequest("Validation error");
+                }
+
                 var data = await _service.CreateProductAsync(product.Adapt<ProductModel>());
                 return Created(HttpContext.Request.Host.ToString() + "/" + data?.Id, data);
             }
