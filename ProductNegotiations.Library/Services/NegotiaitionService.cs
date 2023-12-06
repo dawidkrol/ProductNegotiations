@@ -2,7 +2,9 @@
 using Microsoft.Extensions.Logging;
 using ProductNegotiations.Database.Library.Models;
 using ProductNegotiations.Database.Library.Services;
+using ProductNegotiations.Library.Helpers;
 using ProductNegotiations.Library.Models;
+using System.Net.NetworkInformation;
 
 namespace ProductNegotiations.Library.Services
 {
@@ -34,14 +36,16 @@ namespace ProductNegotiations.Library.Services
             }
         }
 
-        public async Task<IEnumerable<NegotiationModel>> GetUnresolvedNegotiationsAsync()
+        public async Task<PagedList<NegotiationModel>> GetUnresolvedNegotiationsAsync(PagingModel paging)
         {
             try
             {
                 _logger.LogTrace("Getting information about unresolved negotation");
 
                 var data = await _service.GetUnresolvedNegotiationsAsync();
-                return data?.Adapt<IEnumerable<NegotiationModel>>();
+                return PagedList<NegotiationModel>.ToPagedList(data.AsEnumerable(),
+                                           paging.PageNumber,
+                                           paging.PageSize);
             }
             catch (Exception ex)
             {
@@ -50,14 +54,16 @@ namespace ProductNegotiations.Library.Services
             }
         }
 
-        public async Task<IEnumerable<NegotiationModel>> GetAllNegotiationsAsync()
+        public async Task<PagedList<NegotiationModel>> GetAllNegotiationsAsync(PagingModel paging)
         {
             try
             {
                 _logger.LogTrace("Getting information about all negotation");
 
                 var data = await _service.GetAllNegotiationsAsync();
-                return data?.Adapt<IEnumerable<NegotiationModel>>();
+                return PagedList<NegotiationModel>.ToPagedList(data.AsEnumerable(),
+                           paging.PageNumber,
+                           paging.PageSize);
             }
             catch (Exception ex)
             {
@@ -82,14 +88,16 @@ namespace ProductNegotiations.Library.Services
             }
         }
 
-        public async Task<IEnumerable<NegotiationModel>> GetAllNegotiationsByUserIdAsync(Guid userId)
+        public async Task<PagedList<NegotiationModel>> GetAllNegotiationsByUserIdAsync(PagingModel paging, Guid userId)
         {
             try
             {
                 _logger.LogTrace("Getting information about negotation created by user: {userId}", userId);
 
                 var data = await _service.GetAllNegotiationsByUserIdAsync(userId);
-                return data?.Adapt<IEnumerable<NegotiationModel>>();
+                return PagedList<NegotiationModel>.ToPagedList(data.AsEnumerable(),
+                           paging.PageNumber,
+                           paging.PageSize);
             }
             catch (Exception ex)
             {
@@ -98,14 +106,16 @@ namespace ProductNegotiations.Library.Services
             }
         }
 
-        public async Task<IEnumerable<NegotiationModel>> GetResolvedNegotiationsByUserIdAsync(Guid userId)
+        public async Task<PagedList<NegotiationModel>> GetResolvedNegotiationsByUserIdAsync(PagingModel paging, Guid userId)
         {
             try
             {
                 _logger.LogTrace("Getting information about resolved negotiations created by user: {userId}", userId);
 
                 var data = await _service.GetResolvedNegotiationsByUserIdAsync(userId);
-                return data?.Adapt<IEnumerable<NegotiationModel>>();
+                return PagedList<NegotiationModel>.ToPagedList(data.AsEnumerable(),
+                           paging.PageNumber,
+                           paging.PageSize);
             }
             catch (Exception ex)
             {
@@ -114,14 +124,16 @@ namespace ProductNegotiations.Library.Services
             }
         }
 
-        public async Task<IEnumerable<NegotiationModel>> GetUnresolvedNegotiationsByUserIdAsync(Guid userId)
+        public async Task<PagedList<NegotiationModel>> GetUnresolvedNegotiationsByUserIdAsync(PagingModel paging, Guid userId)
         {
             try
             {
                 _logger.LogTrace("Getting information about resolved negotiations created by user: {userId}", userId);
 
                 var data = await _service.GetUnresolvedNegotiationsByUserIdAsync(userId);
-                return data?.Adapt<IEnumerable<NegotiationModel>>();
+                return PagedList<NegotiationModel>.ToPagedList(data.AsEnumerable(),
+                           paging.PageNumber,
+                           paging.PageSize);
             }
             catch (Exception ex)
             {
@@ -130,17 +142,20 @@ namespace ProductNegotiations.Library.Services
             }
         }
 
-        public async Task<bool> CreateNegotiationAsync(Guid userId, NegotiationModel negotiationModel)
+        public async Task<NegotiationModel> CreateNegotiationAsync(Guid userId, NegotiationModel negotiationModel)
         {
             try
             {
                 var productId = negotiationModel.Product.Id;
+
+                negotiationModel.Id = Guid.NewGuid();
+
                 _logger.LogTrace("Creating negotiaition model by user: {userId}, about product: {Id}", userId, productId);
 
                 if(await _service.IsUnresolvedNegotiationByProductAndUser(productId, userId))
                 {
                     _logger.LogDebug("We found unresolved negotiation for product: {productId} from the user: {userId}", userId, productId);
-                    return false;
+                    return null;
                 }
 
                 int negotiationTrials = await _service.GetResolvedNegotiationsByUserIdAndProductAsync(productId, userId);
@@ -148,7 +163,7 @@ namespace ProductNegotiations.Library.Services
                 if (negotiationTrials > 3)
                 {
                     _logger.LogDebug("We found at least 3 price negotiation attempts for product: {productId} from the user: {userId}", userId, productId);
-                    return false;
+                    return null;
                 }
 
                 var data = negotiationModel.Adapt<NegotiationDbModel>();
@@ -160,16 +175,16 @@ namespace ProductNegotiations.Library.Services
 
                     await RefuseNegotiation(data.Id, "Proposed price exceeds twice the base price of the product");
 
-                    return false;
+                    return null;
                 }
 
                 _logger.LogDebug("New negotiation created");
-                return true;
+                return negotiationModel;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message, ex);
-                return false;
+                return null;
             }
 
         }

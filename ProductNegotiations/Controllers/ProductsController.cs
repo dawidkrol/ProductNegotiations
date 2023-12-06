@@ -21,8 +21,8 @@ namespace ProductNegotiations.API.Controllers
             _logger = logger;
             _service = service;
         }
-        [HttpGet("/{id}")]
-        public async Task<IActionResult> GetProductByIdAsync(Guid id)
+        [HttpGet("api/Products/{id}")]
+        public async Task<IActionResult> GetProductById(Guid id)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace ProductNegotiations.API.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllProductsAsync([FromQuery] PagingModel paging)
+        public async Task<IActionResult> GetAllProducts([FromQuery] PagingModel paging)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace ProductNegotiations.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateProductAsync(ProductClientModel product)
+        public async Task<IActionResult> CreateProduct(ProductClientModel product)
         {
             try
             {

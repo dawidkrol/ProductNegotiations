@@ -1,4 +1,5 @@
-﻿using ProductNegotiations.Library.Models;
+﻿using ProductNegotiations.Library.Helpers;
+using ProductNegotiations.Library.Models;
 
 namespace ProductNegotiations.Library.Services
 {
@@ -6,15 +7,15 @@ namespace ProductNegotiations.Library.Services
     {
         Task AcceptNegotiation(Guid negotiationId, string description);
         Task RefuseNegotiation(Guid negotiationId, string description);
-        Task<bool> CreateNegotiationAsync(Guid guid, NegotiationModel negotiationModel);
+        Task<NegotiationModel> CreateNegotiationAsync(Guid guid, NegotiationModel negotiationModel);
         Task DeleteNegotiationAsync(NegotiationModel negotiationModel);
-        Task<IEnumerable<NegotiationModel>> GetAllNegotiationsAsync();
-        Task<IEnumerable<NegotiationModel>> GetAllNegotiationsByUserIdAsync(Guid userId);
+        Task<PagedList<NegotiationModel>> GetAllNegotiationsAsync(PagingModel paging);
+        Task<PagedList<NegotiationModel>> GetAllNegotiationsByUserIdAsync(PagingModel paging, Guid userId);
         Task<NegotiationModel> GetNegotiationByIdAsync(Guid id);
         Task<int?> GetNegotiationsAmount(Guid productId, Guid userId);
-        Task<IEnumerable<NegotiationModel>> GetResolvedNegotiationsByUserIdAsync(Guid userId);
-        Task<IEnumerable<NegotiationModel>> GetUnresolvedNegotiationsAsync();
-        Task<IEnumerable<NegotiationModel>> GetUnresolvedNegotiationsByUserIdAsync(Guid userId);
+        Task<PagedList<NegotiationModel>> GetResolvedNegotiationsByUserIdAsync(PagingModel paging, Guid userId);
+        Task<PagedList<NegotiationModel>> GetUnresolvedNegotiationsAsync(PagingModel paging);
+        Task<PagedList<NegotiationModel>> GetUnresolvedNegotiationsByUserIdAsync(PagingModel paging, Guid userId);
         Task UpdateNegotiationAsync(NegotiationModel negotiationModel);
     }
 }
