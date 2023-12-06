@@ -1,7 +1,9 @@
 ﻿using Mapster;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 using ProductNegotiations.Database.Library.Models;
 using ProductNegotiations.Database.Library.Services;
+using ProductNegotiations.Library.Helpers;
 using ProductNegotiations.Library.Models;
 
 namespace ProductNegotiations.Library.Services
@@ -33,14 +35,16 @@ namespace ProductNegotiations.Library.Services
             }
         }
 
-        public async Task<IEnumerable<ProductModel>> GetAllProductsAsync()
+        public async Task<PagedList<ProductModel>> GetAllProductsAsync(PagingModel paging)
         {
             try
             {
                 _logger.LogTrace("Getting information about all products");
 
-                var data = _service.GetAllProductsAsync();
-                return data?.Adapt<IEnumerable<ProductModel>>();
+                var data = await _service.GetAllProductsAsync();
+                return PagedList<ProductModel>.ToPagedList(data.AsEnumerable(),
+                                                           paging.PageNumber,
+                                                           paging.PageSize);
             }
             catch (Exception ex)
             {
@@ -55,18 +59,24 @@ namespace ProductNegotiations.Library.Services
         //    throw new NotImplementedException();
         //}
 
-        public async Task CreateProductAsync(ProductModel product)
+        public async Task<ProductModel> CreateProductAsync(ProductModel product)
         {
             try
             {
                 _logger.LogTrace("Creating new product");
 
                 var data = product.Adapt<ProductDbModel>();
+
+                data.Id = Guid.NewGuid();
+
                 await _service.CreateProductAsync(data);
+
+                return data.Adapt<ProductModel>();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message, ex);
+                return null;
             }
         }
 
