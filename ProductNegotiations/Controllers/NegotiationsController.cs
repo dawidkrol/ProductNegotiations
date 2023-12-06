@@ -1,4 +1,6 @@
-﻿using Mapster;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -17,11 +19,13 @@ namespace ProductNegotiations.API.Controllers
     {
         private readonly ILogger<NegotiationsController> _logger;
         private readonly INegotiaitionService _service;
+        private readonly IValidator<NegotiationClientCreateModel> _validator;
 
-        public NegotiationsController(ILogger<NegotiationsController> logger, INegotiaitionService service)
+        public NegotiationsController(ILogger<NegotiationsController> logger, INegotiaitionService service, IValidator<NegotiationClientCreateModel> validator)
         {
             _logger = logger;
             _service = service;
+            _validator = validator;
         }
 
         [HttpGet("api/Negotiations/{id}")]
@@ -278,7 +282,13 @@ namespace ProductNegotiations.API.Controllers
         {
             try
             {
-                string? userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                ValidationResult result = await _validator.ValidateAsync(negotiationModel);
+                if (!result.IsValid)
+                {
+                    return BadRequest("Validation error");
+                }
+
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
                 var userGuid = Guid.Parse(userId);
                 var data = await _service.CreateNegotiationAsync(userGuid, negotiationModel.Adapt<NegotiationModel>());
                 return Created(HttpContext.Request.Host.ToString() + "/" + data?.Id, data);

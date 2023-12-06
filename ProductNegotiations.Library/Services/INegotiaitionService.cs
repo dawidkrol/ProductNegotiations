@@ -17,5 +17,6 @@ namespace ProductNegotiations.Library.Services
         Task<PagedList<NegotiationModel>> GetUnresolvedNegotiationsAsync(PagingModel paging);
         Task<PagedList<NegotiationModel>> GetUnresolvedNegotiationsByUserIdAsync(PagingModel paging, Guid userId);
         Task UpdateNegotiationAsync(NegotiationModel negotiationModel);
+        Task<int> GetResolvedNegotiationsByUserIdAndProductAsync(Guid productId, Guid userId);
     }
 }

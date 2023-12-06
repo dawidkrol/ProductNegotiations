@@ -1,13 +1,13 @@
-using Firebase.Auth;
-using Firebase.Auth.Providers;
-using FirebaseAdmin;
-using Google.Apis.Auth.OAuth2;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ProductNegotiations.API.Models;
+using ProductNegotiations.API.Validators;
 using ProductNegotiations.Database.Library;
 using ProductNegotiations.Database.Library.Services;
 using ProductNegotiations.Library.Services;
+using System;
 
 IConfiguration configuration = new ConfigurationBuilder()
                             .AddJsonFile("appsettings.json")
@@ -15,17 +15,17 @@ IConfiguration configuration = new ConfigurationBuilder()
 
 var builder = WebApplication.CreateBuilder(args);
 
-FirebaseApp.Create();
+//FirebaseApp.Create();
 
-builder.Services.AddSingleton(new FirebaseAuthClient(new FirebaseAuthConfig
-{
-    ApiKey = configuration["firebaseWebAPIKey"],
-    AuthDomain = $"{configuration["firebaseProjectName"]}.firebaseapp.com",
-    Providers = new FirebaseAuthProvider[]
-    {
-        new EmailProvider()
-    }
-}));
+//builder.Services.AddSingleton(new FirebaseAuthClient(new FirebaseAuthConfig
+//{
+//    ApiKey = configuration["firebaseWebAPIKey"],
+//    AuthDomain = $"{configuration["firebaseProjectName"]}.firebaseapp.com",
+//    Providers = new FirebaseAuthProvider[]
+//    {
+//        new EmailProvider()
+//    }
+//}));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -43,11 +43,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddDbContext<NegotiationDbContext>();
 
+// Database services
 builder.Services.AddTransient<INegotiationDBService, NegotiationDBService>();
 builder.Services.AddTransient<IProductDBService, ProductDBService>();
 
-builder.Services.AddTransient<IProductService,  ProductService>();
+// Services
+builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<INegotiaitionService, NegotiaitionService>();
+
+// Validators
+builder.Services.AddTransient<IValidator<NegotiationClientCreateModel>, NegotiationClientValidator>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

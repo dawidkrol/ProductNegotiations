@@ -115,19 +115,32 @@ namespace ProductNegotiations.Database.Library.Services
             data.IsDeleted = true; 
             await _dbContext.SaveChangesAsync();
         }
-
+        /// <summary>
+        /// Returns number of resolved negotiations by user and product
+        /// </summary>
+        /// <param name="productId">Product id</param>
+        /// <param name="userId">User id</param>
         public async Task<int> GetResolvedNegotiationsByUserIdAndProductAsync(Guid productId, Guid userId)
         {
             var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId && x.IsNegotiationResolved == true).Count();
             return output;
         }
-
+        /// <summary>
+        /// Returns true if there exists any unresolved negotiation by product and user
+        /// </summary>
+        /// <param name="productId">Product id</param>
+        /// <param name="userId">User id</param>
         public async Task<bool> IsUnresolvedNegotiationByProductAndUser(Guid productId, Guid userId)
         {
             var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId && x.IsNegotiationResolved == false).Any();
             return output;
         }
-
+        /// <summary>
+        /// Returns true if there exists any already accepted negotiation by product and user
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<bool> IsAlreadyAcceptedNegotiationByProductAndUser(Guid productId, Guid userId)
         {
             var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId && x.IsNegotiationResolved == true && x.Decision == true).Any();
