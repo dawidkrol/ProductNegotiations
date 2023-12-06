@@ -24,8 +24,6 @@ namespace ProductNegotiations.Database.Library.Services
         /// <param name="id">Negotiation id</param>
         public async Task<NegotiationDbModel> GetNegotiationByIdAsync(Guid id)
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = _dbContext.Negotiations.Where(x => x.Id == id).Single();
             return output;
         }
@@ -34,8 +32,6 @@ namespace ProductNegotiations.Database.Library.Services
         /// </summary>
         public async Task<IEnumerable<NegotiationDbModel>> GetUnresolvedNegotiationsAsync()
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = getAllNotDeleted().Where(x => x.IsNegotiationResolved == false).AsEnumerable();
             return output;
         }
@@ -44,8 +40,6 @@ namespace ProductNegotiations.Database.Library.Services
         /// </summary>
         public async Task<IEnumerable<NegotiationDbModel>> GetAllNegotiationsAsync()
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = _dbContext.Negotiations.AsEnumerable();
             return output;
         }
@@ -56,8 +50,6 @@ namespace ProductNegotiations.Database.Library.Services
         /// <param name="userId">Users id</param>
         public async Task<int> GetNegotiationsAmount(Guid productId, Guid userId)
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId).Count();
             return output;
         }
@@ -67,8 +59,6 @@ namespace ProductNegotiations.Database.Library.Services
         /// <param name="userId">User id</param>
         public async Task<IEnumerable<NegotiationDbModel>> GetAllNegotiationsByUserIdAsync(Guid userId)
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = getAllNotDeleted().Where(x => x.UserId == userId).AsEnumerable();
             return output;
         }
@@ -78,8 +68,6 @@ namespace ProductNegotiations.Database.Library.Services
         /// <param name="userId">User id</param>
         public async Task<IEnumerable<NegotiationDbModel>> GetResolvedNegotiationsByUserIdAsync(Guid userId)
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = getAllNotDeleted().Where(x => x.UserId == userId && x.IsNegotiationResolved == true).AsEnumerable();
             return output;
         }
@@ -89,8 +77,6 @@ namespace ProductNegotiations.Database.Library.Services
         /// <param name="userId">User id</param>
         public async Task<IEnumerable<NegotiationDbModel>> GetUnresolvedNegotiationsByUserIdAsync(Guid userId)
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = getAllNotDeleted().Where(x => x.UserId == userId && x.IsNegotiationResolved == false).AsEnumerable();
             return output;
         }

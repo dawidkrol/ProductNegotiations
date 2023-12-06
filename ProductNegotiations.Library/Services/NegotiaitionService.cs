@@ -4,7 +4,6 @@ using ProductNegotiations.Database.Library.Models;
 using ProductNegotiations.Database.Library.Services;
 using ProductNegotiations.Library.Helpers;
 using ProductNegotiations.Library.Models;
-using System.Net.NetworkInformation;
 
 namespace ProductNegotiations.Library.Services
 {
@@ -13,7 +12,7 @@ namespace ProductNegotiations.Library.Services
         private readonly ILogger<NegotiaitionService> _logger;
         private readonly INegotiationDBService _service;
 
-        public NegotiaitionService(ILogger<NegotiaitionService> logger,INegotiationDBService service)
+        public NegotiaitionService(ILogger<NegotiaitionService> logger, INegotiationDBService service)
         {
             _logger = logger;
             _service = service;
@@ -152,7 +151,7 @@ namespace ProductNegotiations.Library.Services
 
                 _logger.LogTrace("Creating negotiaition model by user: {userId}, about product: {Id}", userId, productId);
 
-                if(await _service.IsUnresolvedNegotiationByProductAndUser(productId, userId))
+                if (await _service.IsUnresolvedNegotiationByProductAndUser(productId, userId))
                 {
                     _logger.LogDebug("We found unresolved negotiation for product: {productId} from the user: {userId}", userId, productId);
                     return null;

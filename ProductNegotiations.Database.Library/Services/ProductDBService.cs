@@ -7,7 +7,6 @@ namespace ProductNegotiations.Database.Library.Services
     {
         private readonly NegotiationDbContext _dbContext;
 
-        //TODO: implement paging
         public ProductDBService(NegotiationDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -25,8 +24,6 @@ namespace ProductNegotiations.Database.Library.Services
         /// <param name="id">Product id</param>
         public async Task<ProductDbModel> GetProductByIdAsync(Guid id)
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = await _dbContext.Products.Where(x => x.Id == id).SingleAsync();
             return output;
         }
@@ -35,25 +32,16 @@ namespace ProductNegotiations.Database.Library.Services
         /// </summary>
         public async Task<IEnumerable<ProductDbModel>> GetAllProductsAsync()
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = geNotDeletedProducts();
             return output;
         }
 
-        //TODO: implement filter
-        //public async Task<IEnumerable<ProductDbModel>> GetProductsByFilterAsync(Guid id)
-        //{
-        //    throw new NotImplementedException();
-        //}
         /// <summary>
         /// Creating new product.
         /// </summary>
         /// <param name="product">Model to create</param>
         public async Task CreateProductAsync(ProductDbModel product)
         {
-            //TODO: Checking errors
-            //TODO: logging
             await _dbContext.Products.AddAsync(product);
             await _dbContext.SaveChangesAsync();
         }

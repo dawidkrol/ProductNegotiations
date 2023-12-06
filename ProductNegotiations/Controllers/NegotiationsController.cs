@@ -274,7 +274,7 @@ namespace ProductNegotiations.API.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<NegotiationClientModel>> CreateNegotiation(NegotiationClientModel negotiationModel)
+        public async Task<ActionResult<NegotiationClientModel>> CreateNegotiation(NegotiationClientCreateModel negotiationModel)
         {
             try
             {
