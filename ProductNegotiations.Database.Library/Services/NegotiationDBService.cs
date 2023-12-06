@@ -129,5 +129,23 @@ namespace ProductNegotiations.Database.Library.Services
             data.IsDeleted = true; 
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<int> GetResolvedNegotiationsByUserIdAndProductAsync(Guid productId, Guid userId)
+        {
+            var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId && x.IsNegotiationResolved == true).Count();
+            return output;
+        }
+
+        public async Task<bool> IsUnresolvedNegotiationByProductAndUser(Guid productId, Guid userId)
+        {
+            var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId && x.IsNegotiationResolved == false).Any();
+            return output;
+        }
+
+        public async Task<bool> IsAlreadyAcceptedNegotiationByProductAndUser(Guid productId, Guid userId)
+        {
+            var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId && x.IsNegotiationResolved == true && x.Decision == true).Any();
+            return output;
+        }
     }
 }
