@@ -3,7 +3,7 @@
     public class NegotiationDbModel
     {
         public Guid Id { get; set; }
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public ProductDbModel Product { get; set; }
         public string? AdditiionalInformations { get; set; }
         public decimal ProposedPrice { get; set; }

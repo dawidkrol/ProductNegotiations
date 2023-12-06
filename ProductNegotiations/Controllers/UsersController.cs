@@ -1,6 +1,7 @@
 ﻿using FirebaseAdmin.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProductNegotiations.API.Models;
 using System.Security.Claims;
 
 namespace ProductNegotiations.API.Controllers
@@ -9,7 +10,7 @@ namespace ProductNegotiations.API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        [HttpGet("GetUsers")]
+        [HttpGet("api/Users/GetUsers")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get()
         {
@@ -17,7 +18,7 @@ namespace ProductNegotiations.API.Controllers
             return Ok(data);
         }
 
-        [HttpPost("SetAsAdmin")]
+        [HttpPost("api/Users/SetAsAdmin")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SetAsAdmin([FromBody] string uid)
         {
@@ -29,7 +30,7 @@ namespace ProductNegotiations.API.Controllers
 
             return Ok();
         }
-        [HttpPost("RemoveRoles")]
+        [HttpPost("api/Users/RemoveRoles")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveRoles([FromBody] string uid)
         {

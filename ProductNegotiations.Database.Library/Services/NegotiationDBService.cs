@@ -24,8 +24,6 @@ namespace ProductNegotiations.Database.Library.Services
         /// <param name="id">Negotiation id</param>
         public async Task<NegotiationDbModel> GetNegotiationByIdAsync(Guid id)
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = _dbContext.Negotiations.Where(x => x.Id == id).Single();
             return output;
         }
@@ -34,8 +32,6 @@ namespace ProductNegotiations.Database.Library.Services
         /// </summary>
         public async Task<IEnumerable<NegotiationDbModel>> GetUnresolvedNegotiationsAsync()
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = getAllNotDeleted().Where(x => x.IsNegotiationResolved == false).AsEnumerable();
             return output;
         }
@@ -44,8 +40,6 @@ namespace ProductNegotiations.Database.Library.Services
         /// </summary>
         public async Task<IEnumerable<NegotiationDbModel>> GetAllNegotiationsAsync()
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = _dbContext.Negotiations.AsEnumerable();
             return output;
         }
@@ -54,10 +48,8 @@ namespace ProductNegotiations.Database.Library.Services
         /// </summary>
         /// <param name="productId">Product id</param>
         /// <param name="userId">Users id</param>
-        public async Task<int> GetNegotiationsAmount(Guid productId, Guid userId)
+        public async Task<int> GetNegotiationsAmount(Guid productId, string userId)
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId).Count();
             return output;
         }
@@ -65,10 +57,8 @@ namespace ProductNegotiations.Database.Library.Services
         /// Returns all negotiations attemps by specific user.
         /// </summary>
         /// <param name="userId">User id</param>
-        public async Task<IEnumerable<NegotiationDbModel>> GetAllNegotiationsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<NegotiationDbModel>> GetAllNegotiationsByUserIdAsync(string userId)
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = getAllNotDeleted().Where(x => x.UserId == userId).AsEnumerable();
             return output;
         }
@@ -76,10 +66,8 @@ namespace ProductNegotiations.Database.Library.Services
         /// Returns all resolved negotiations attemps by specific user.
         /// </summary>
         /// <param name="userId">User id</param>
-        public async Task<IEnumerable<NegotiationDbModel>> GetResolvedNegotiationsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<NegotiationDbModel>> GetResolvedNegotiationsByUserIdAsync(string userId)
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = getAllNotDeleted().Where(x => x.UserId == userId && x.IsNegotiationResolved == true).AsEnumerable();
             return output;
         }
@@ -87,10 +75,8 @@ namespace ProductNegotiations.Database.Library.Services
         /// Returns all unresolved negotiations attemps by specific user.
         /// </summary>
         /// <param name="userId">User id</param>
-        public async Task<IEnumerable<NegotiationDbModel>> GetUnresolvedNegotiationsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<NegotiationDbModel>> GetUnresolvedNegotiationsByUserIdAsync(string userId)
         {
-            //TODO: Checking errors
-            //TODO: logging
             var output = getAllNotDeleted().Where(x => x.UserId == userId && x.IsNegotiationResolved == false).AsEnumerable();
             return output;
         }
@@ -129,20 +115,33 @@ namespace ProductNegotiations.Database.Library.Services
             data.IsDeleted = true; 
             await _dbContext.SaveChangesAsync();
         }
-
-        public async Task<int> GetResolvedNegotiationsByUserIdAndProductAsync(Guid productId, Guid userId)
+        /// <summary>
+        /// Returns number of resolved negotiations by user and product
+        /// </summary>
+        /// <param name="productId">Product id</param>
+        /// <param name="userId">User id</param>
+        public async Task<int> GetResolvedNegotiationsByUserIdAndProductAsync(Guid productId, string userId)
         {
             var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId && x.IsNegotiationResolved == true).Count();
             return output;
         }
-
-        public async Task<bool> IsUnresolvedNegotiationByProductAndUser(Guid productId, Guid userId)
+        /// <summary>
+        /// Returns true if there exists any unresolved negotiation by product and user
+        /// </summary>
+        /// <param name="productId">Product id</param>
+        /// <param name="userId">User id</param>
+        public async Task<bool> IsUnresolvedNegotiationByProductAndUser(Guid productId, string userId)
         {
             var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId && x.IsNegotiationResolved == false).Any();
             return output;
         }
-
-        public async Task<bool> IsAlreadyAcceptedNegotiationByProductAndUser(Guid productId, Guid userId)
+        /// <summary>
+        /// Returns true if there exists any already accepted negotiation by product and user
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<bool> IsAlreadyAcceptedNegotiationByProductAndUser(Guid productId, string userId)
         {
             var output = getAllNotDeleted().Where(x => x.Product.Id == productId && x.UserId == userId && x.IsNegotiationResolved == true && x.Decision == true).Any();
             return output;

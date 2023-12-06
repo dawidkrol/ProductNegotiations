@@ -1,5 +1,4 @@
 ﻿using Mapster;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 using ProductNegotiations.Database.Library.Models;
 using ProductNegotiations.Database.Library.Services;
@@ -52,12 +51,6 @@ namespace ProductNegotiations.Library.Services
                 return null;
             }
         }
-
-        //TODO: implement filter
-        //public async Task<IEnumerable<ProductDbModel>> GetProductsByFilterAsync(Guid id)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         public async Task<ProductModel> CreateProductAsync(ProductModel product)
         {

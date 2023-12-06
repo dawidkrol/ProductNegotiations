@@ -1,4 +1,6 @@
-﻿using Mapster;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -17,11 +19,13 @@ namespace ProductNegotiations.API.Controllers
     {
         private readonly ILogger<NegotiationsController> _logger;
         private readonly INegotiaitionService _service;
+        private readonly IValidator<NegotiationClientCreateModel> _validator;
 
-        public NegotiationsController(ILogger<NegotiationsController> logger, INegotiaitionService service)
+        public NegotiationsController(ILogger<NegotiationsController> logger, INegotiaitionService service, IValidator<NegotiationClientCreateModel> validator)
         {
             _logger = logger;
             _service = service;
+            _validator = validator;
         }
 
         [HttpGet("api/Negotiations/{id}")]
@@ -99,8 +103,7 @@ namespace ProductNegotiations.API.Controllers
             try
             {
                 string? userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var userGuid = Guid.Parse(userId);
-                var data = await _service.GetNegotiationsAmount(productId, userGuid);
+                var data = await _service.GetNegotiationsAmount(productId, userId);
                 return Ok(data);
             }
             catch (Exception ex)
@@ -117,8 +120,7 @@ namespace ProductNegotiations.API.Controllers
             try
             {
                 string? userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var userGuid = Guid.Parse(userId);
-                var data = await _service.GetAllNegotiationsByUserIdAsync(paging, userGuid);
+                var data = await _service.GetAllNegotiationsByUserIdAsync(paging, userId);
                 var metadata = new
                 {
                     data.TotalCount,
@@ -140,7 +142,7 @@ namespace ProductNegotiations.API.Controllers
 
         [HttpGet("api/Negotiations/ByUserId/{userId}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<IEnumerable<NegotiationClientModel>>> GetAllNegotiationsByUserId(Guid userId, [FromQuery] PagingModel paging)
+        public async Task<ActionResult<IEnumerable<NegotiationClientModel>>> GetAllNegotiationsByUserId(string userId, [FromQuery] PagingModel paging)
         {
             try
             {
@@ -171,8 +173,8 @@ namespace ProductNegotiations.API.Controllers
             try
             {
                 string? userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var userGuid = Guid.Parse(userId);
-                var data = await _service.GetResolvedNegotiationsByUserIdAsync(paging, userGuid);
+
+                var data = await _service.GetResolvedNegotiationsByUserIdAsync(paging, userId);
                 var metadata = new
                 {
                     data.TotalCount,
@@ -199,8 +201,8 @@ namespace ProductNegotiations.API.Controllers
             try
             {
                 string? userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var userGuid = Guid.Parse(userId);
-                var data = await _service.GetUnresolvedNegotiationsByUserIdAsync(paging, userGuid);
+
+                var data = await _service.GetUnresolvedNegotiationsByUserIdAsync(paging, userId);
                 var metadata = new
                 {
                     data.TotalCount,
@@ -222,7 +224,7 @@ namespace ProductNegotiations.API.Controllers
 
         [HttpGet("api/Negotiations/Resolved/{userId}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<NegotiationClientModel>>> GetResolvedNegotiationsByUserId(Guid userId, [FromQuery] PagingModel paging)
+        public async Task<ActionResult<IEnumerable<NegotiationClientModel>>> GetResolvedNegotiationsByUserId(string userId, [FromQuery] PagingModel paging)
         {
             try
             {
@@ -248,7 +250,7 @@ namespace ProductNegotiations.API.Controllers
 
         [HttpGet("api/Negotiations/Unresolved/{userId}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<NegotiationClientModel>>> GetUnresolvedNegotiationsByUserId(Guid userId, [FromQuery] PagingModel paging)
+        public async Task<ActionResult<IEnumerable<NegotiationClientModel>>> GetUnresolvedNegotiationsByUserId(string userId, [FromQuery] PagingModel paging)
         {
             try
             {
@@ -274,13 +276,18 @@ namespace ProductNegotiations.API.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<NegotiationClientModel>> CreateNegotiation(NegotiationClientModel negotiationModel)
+        public async Task<ActionResult<NegotiationClientModel>> CreateNegotiation(NegotiationClientCreateModel negotiationModel)
         {
             try
             {
-                string? userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var userGuid = Guid.Parse(userId);
-                var data = await _service.CreateNegotiationAsync(userGuid, negotiationModel.Adapt<NegotiationModel>());
+                ValidationResult result = await _validator.ValidateAsync(negotiationModel);
+                if (!result.IsValid)
+                {
+                    return BadRequest("Validation error");
+                }
+
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                var data = await _service.CreateNegotiationAsync(userId, negotiationModel.Adapt<NegotiationModel>());
                 return Created(HttpContext.Request.Host.ToString() + "/" + data?.Id, data);
             }
             catch (Exception ex)
