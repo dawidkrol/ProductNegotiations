@@ -19,7 +19,7 @@ namespace ProductNegotiations.Library.ValidityChecks
         public async Task<bool> IsSatisfied(NegotiationModel entity)
         {
             int negotiationTrials = await _negotiaitionService.GetResolvedNegotiationsByUserIdAndProductAsync(entity.Product.Id, entity.UserId);
-            if (_atttepmpts > negotiationTrials)
+            if (_atttepmpts <= negotiationTrials)
             {
                 _logger.LogDebug("We found at least {_atttepmpts} price negotiation attempts for product: {entity.Product.Id} from the user: {entity.UserId}", _atttepmpts, entity.Product.Id, entity.UserId);
                 return false;

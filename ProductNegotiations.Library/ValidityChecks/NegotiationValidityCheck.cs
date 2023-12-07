@@ -6,11 +6,11 @@ namespace ProductNegotiations.Library.ValidityChecks
 {
     public static class NegotiationValidityCheck
     {
-        public static bool Check(this NegotiationModel model, ILogger logger, INegotiaitionService negotiaitionService, IProductService productService, Action<CheckValues> cv = null)
+        public static bool Check(this NegotiationModel model, ILogger logger, INegotiaitionService negotiaitionService, IProductService productService, Action<CheckValues>? options = null)
         {
             var values = new CheckValues();
 
-            cv?.Invoke(values);
+            options?.Invoke(values);
 
             bool output = false;
 

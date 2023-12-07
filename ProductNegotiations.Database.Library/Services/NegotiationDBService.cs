@@ -16,7 +16,7 @@ namespace ProductNegotiations.Database.Library.Services
         /// </summary>
         private IQueryable<NegotiationDbModel> getAllNotDeleted()
         {
-            return _dbContext.Negotiations.Where(x => x.IsDeleted == false);
+            return _dbContext.Negotiations.Where(x => x.IsDeleted == false).Include("Product");
         }
         /// <summary>
         /// Returning negotiation model by id (including deleted).
@@ -24,7 +24,7 @@ namespace ProductNegotiations.Database.Library.Services
         /// <param name="id">Negotiation id</param>
         public async Task<NegotiationDbModel> GetNegotiationByIdAsync(Guid id)
         {
-            var output = _dbContext.Negotiations.Where(x => x.Id == id).Single();
+            var output = _dbContext.Negotiations.Where(x => x.Id == id).Include("Product").Single();
             return output;
         }
         /// <summary>
@@ -40,7 +40,7 @@ namespace ProductNegotiations.Database.Library.Services
         /// </summary>
         public async Task<IEnumerable<NegotiationDbModel>> GetAllNegotiationsAsync()
         {
-            var output = _dbContext.Negotiations.AsEnumerable();
+            var output = _dbContext.Negotiations.Include("Product").AsEnumerable();
             return output;
         }
         /// <summary>
@@ -86,6 +86,8 @@ namespace ProductNegotiations.Database.Library.Services
         /// <param name="negotiationDbModel">Model to create</param>
         public async Task CreateNegotiationAsync(NegotiationDbModel negotiationDbModel)
         {
+            var product = _dbContext.Products.Single(x => x.Id == negotiationDbModel.Product.Id);
+            negotiationDbModel.Product = product;
             await _dbContext.Negotiations.AddAsync(negotiationDbModel);
             await _dbContext.SaveChangesAsync();
         }

@@ -156,6 +156,7 @@ namespace ProductNegotiations.Library.Services
                 var productId = negotiationModel.Product.Id;
 
                 negotiationModel.Id = Guid.NewGuid();
+                negotiationModel.UserId = userId;
 
                 _logger.LogTrace("Creating negotiaition model by user: {userId}, about product: {Id}", userId, productId);
 
@@ -165,7 +166,11 @@ namespace ProductNegotiations.Library.Services
                     return null;
                 }
 
-                var checksResult = negotiationModel.Check(_logger, this, _productService, x => new CheckValues() { MaxAttempts = 3, MaxTimesLowerPrice = 2 });
+                var checksResult = negotiationModel.Check(_logger, this, _productService, x =>
+                {
+                    x.MaxAttempts = 3;
+                    x.MaxTimesLowerPrice = 2;
+                });
                 if (!checksResult)
                 {
                     return null;

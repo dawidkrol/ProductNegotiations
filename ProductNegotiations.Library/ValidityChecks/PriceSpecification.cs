@@ -21,7 +21,7 @@ namespace ProductNegotiations.Library.ValidityChecks
         public async Task<bool> IsSatisfied(NegotiationModel entity)
         {
             var productPrice = _productService.GetProductByIdAsync(entity.Product.Id).GetAwaiter().GetResult().Price;
-            if (productPrice / _maxTimesLowerPrice < entity.ProposedPrice)
+            if (productPrice / _maxTimesLowerPrice > entity.ProposedPrice)
             {
                 _logger.LogDebug("Proposed price exceeds {productPrice} times less price of the product, the proposal is rejected", productPrice);
 

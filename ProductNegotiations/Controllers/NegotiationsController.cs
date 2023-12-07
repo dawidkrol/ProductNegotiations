@@ -286,8 +286,12 @@ namespace ProductNegotiations.API.Controllers
                     return BadRequest("Validation error");
                 }
 
-                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var data = await _service.CreateNegotiationAsync(userId, negotiationModel.Adapt<NegotiationModel>());
+                if(data == null) 
+                {
+                    return BadRequest("Cannot create that negotiation");
+                }
                 return Created(HttpContext.Request.Host.ToString() + "/" + data?.Id, data);
             }
             catch (Exception ex)

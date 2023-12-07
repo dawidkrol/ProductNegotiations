@@ -1,9 +1,7 @@
 using FirebaseAdmin;
-using FirebaseAdminAuthentication.DependencyInjection.Extensions;
 using FluentValidation;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using ProductNegotiations.API.Models;
 using ProductNegotiations.API.Validators;
